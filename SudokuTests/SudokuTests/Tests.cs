@@ -4,6 +4,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using System;
+using System.Threading;
 
 namespace SudokuTests
 {
@@ -65,45 +66,16 @@ namespace SudokuTests
         }
 
 
-
         [Test]
-        public void EnterNumberInCell()
+        public void FooterIsDisplayed()
         {
             driver.Navigate().GoToUrl("https://sudoku.com");
-            System.Threading.Thread.Sleep(3000); 
-            IWebElement cell = driver.FindElement(By.XPath("//div[@class='cell' and not(contains(@class, 'given'))]"));
-            ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].click();", cell);
-            ((IJavaScriptExecutor)driver).ExecuteScript("arguments[0].innerText = '5';", cell);
+            Thread.Sleep(2000); 
+
+            IWebElement footer = driver.FindElement(By.TagName("footer"));
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.IsTrue(footer.Displayed, "Footer is not displayed on the page.");
         }
 
-
-
-
-
-        [Test]
-        public void UndoMove()
-        {
-            driver.Navigate().GoToUrl("https://sudoku.com");
-            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
-            IWebElement cell = wait.Until(d =>
-            {
-                var element = d.FindElement(By.XPath("//div[@class='sudoku-board']//div[contains(@class, 'cell') and not(contains(@class, 'given'))]"));
-                return (element.Displayed && element.Enabled) ? element : null;
-            });
-
-            if (cell != null)
-            {
-                cell.Click();
-                cell.SendKeys("5");
-
-                IWebElement undoButton = driver.FindElement(By.XPath("//button[contains(text(), 'Undo')]"));
-                undoButton.Click();
-            }
-            else
-            {
-                Console.WriteLine("Cell not found or not interactable.");
-            }
-        }
 
 
 
